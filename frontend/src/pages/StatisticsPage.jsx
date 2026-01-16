@@ -16,7 +16,6 @@ const StatisticsPage = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Custom legend component to force order
   const CustomLegend = () => {
     const items = [
       { name: "Excellent (≥8)", color: "#10b981" },
@@ -62,7 +61,6 @@ const StatisticsPage = () => {
         const response = await axiosInstance.get("/statistics");
         const rawData = response.data;
 
-        // 1. Định nghĩa thứ tự ưu tiên hiển thị các môn học trên trục X
         const subjectOrder = [
           "math",
           "literature",
@@ -75,16 +73,14 @@ const StatisticsPage = () => {
           "civic_education",
         ];
 
-        // 2. Chuyển đổi và Sắp xếp dữ liệu dựa trên subjectOrder
         const formattedData = subjectOrder
-          .filter((key) => rawData[key]) // Chỉ lấy môn có dữ liệu
+          .filter((key) => rawData[key])
           .map((key) => ({
             subject: key
               .replace("_", " ")
               .replace(/\b\w/g, (l) => l.toUpperCase()),
             excellent: parseInt(rawData[key].excellent || 0),
             good: parseInt(rawData[key].good || 0),
-            // Hỗ trợ cả trường hợp bị sai chính tả 'avarage' từ cache cũ
             average: parseInt(
               rawData[key].average || rawData[key].avarage || 0
             ),
@@ -110,13 +106,9 @@ const StatisticsPage = () => {
       </div>
     );
 
-  // ... (giữ nguyên phần useEffect và logic chuyển đổi dữ liệu)
-
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-[600px]">
-        {/* ... (phần tiêu đề) */}
-
         {data.length > 0 ? (
           <ResponsiveContainer width="100%" height="90%">
             <BarChart
@@ -138,7 +130,6 @@ const StatisticsPage = () => {
               <YAxis />
               <Tooltip />
 
-              {/* CẤU HÌNH LEGEND ĐỂ ÉP THỨ TỰ HIỂN THỊ */}
               <Legend
                 verticalAlign="top"
                 align="center"
@@ -146,7 +137,6 @@ const StatisticsPage = () => {
                 content={<CustomLegend />}
               />
 
-              {/* SẮP XẾP CÁC THẺ BAR THEO THỨ TỰ BẠN MUỐN HIỂN THỊ TRONG LEGEND */}
               <Bar
                 dataKey="excellent"
                 fill="#10b981"

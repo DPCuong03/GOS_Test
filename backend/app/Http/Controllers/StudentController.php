@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentController extends Controller
 {
-    // Task 1: Tra cứu điểm theo registration_number
+
     public function searchByRegistrationNumber($registrationNumber)
     {
         $student = Student::where('registration_number', $registrationNumber)->first();
@@ -19,7 +19,6 @@ class StudentController extends Controller
         return response()->json($student);
     }
 
-    // Task 2: Thống kê 4 mức điểm (Dùng cho biểu đồ)
     public function getStatistics()
     {
         // Cache for 24 hours
@@ -52,7 +51,6 @@ class StudentController extends Controller
         return response()->json($report);
     }
 
-    // Optional: Method to manually refresh the cache when data updates
     public function refreshStatisticsCache()
     {
         Cache::forget('student_statistics');
@@ -60,12 +58,11 @@ class StudentController extends Controller
     }
 
 
-    // Task 3: Top 10 khối A (Toán, Vật lí, Hóa học)
     public function getTop10GroupA()
 {
     $topStudents = Student::select('registration_number', 'math', 'physics', 'chemistry', 'total_group_a')
         ->whereNotNull('total_group_a')
-        ->orderByDesc('total_group_a') // Use indexed column!
+        ->orderByDesc('total_group_a')
         ->limit(10)
         ->get();
 

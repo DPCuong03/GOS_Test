@@ -26,7 +26,6 @@ const SearchPage = () => {
     }
   };
 
-  // Hàm tính điểm trung bình tất cả các môn có điểm
   const calculateAverage = (data) => {
     const subjects = [
       "math",
