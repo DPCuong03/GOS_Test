@@ -18,12 +18,8 @@ class StudentSeeder extends Seeder
 
         DB::table('students')->truncate();
 
-        $this->command->info("Đang kết nối tới dữ liệu từ GitHub...");
-
         if (($handle = fopen($url, "r")) !== FALSE) {
             $header = fgetcsv($handle, 1000, ",");
-            
-            $this->command->info("Bắt đầu nạp dữ liệu (vui lòng đợi)...");
 
             DB::beginTransaction();
             
