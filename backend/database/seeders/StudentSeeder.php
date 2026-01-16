@@ -14,16 +14,13 @@ class StudentSeeder extends Seeder
     {
         set_time_limit(0);
         
-        $filePath = storage_path('app/private/diem_thi_thpt_2024.csv');
-        
-        if (!file_exists($filePath)) {
-            $this->command->error("Không tìm thấy file tại: " . $filePath);
-            return;
-        }
+        $url = "https://raw.githubusercontent.com/GoldenOwlAsia/webdev-intern-assignment-3/main/dataset/diem_thi_thpt_2024.csv";
 
         DB::table('students')->truncate();
 
-        if (($handle = fopen($filePath, "r")) !== FALSE) {
+        $this->command->info("Đang kết nối tới dữ liệu từ GitHub...");
+
+        if (($handle = fopen($url, "r")) !== FALSE) {
             $header = fgetcsv($handle, 1000, ",");
             
             $this->command->info("Bắt đầu nạp dữ liệu (vui lòng đợi)...");
@@ -45,20 +42,20 @@ class StudentSeeder extends Seeder
                     : null;
 
                 DB::table('students')->insert([
-                    'registration_number' => $item['sbd'],
-                    'math'          => $math,
-                    'literature'       => is_numeric($item['ngu_van']) ? (float)$item['ngu_van'] : null,
-                    'foreign_language'     => is_numeric($item['ngoai_ngu']) ? (float)$item['ngoai_ngu'] : null,
-                    'physics'        => $physics,
-                    'chemistry'       => $chemistry,
-                    'biology'      => is_numeric($item['sinh_hoc']) ? (float)$item['sinh_hoc'] : null,
-                    'history'       => is_numeric($item['lich_su']) ? (float)$item['lich_su'] : null,
-                    'geography'        => is_numeric($item['dia_li']) ? (float)$item['dia_li'] : null,
-                    'civic_education'          => is_numeric($item['gdcd']) ? (float)$item['gdcd'] : null,
-                    'foreign_language_code'  => $item['ma_ngoai_ngu'] ?: null,
-                    'total_group_a' => $totalGroupA,
-                    'created_at'    => now(),
-                    'updated_at'    => now(),
+                    'registration_number'   => $item['sbd'],
+                    'math'                  => $math,
+                    'literature'            => is_numeric($item['ngu_van']) ? (float)$item['ngu_van'] : null,
+                    'foreign_language'      => is_numeric($item['ngoai_ngu']) ? (float)$item['ngoai_ngu'] : null,
+                    'physics'               => $physics,
+                    'chemistry'             => $chemistry,
+                    'biology'               => is_numeric($item['sinh_hoc']) ? (float)$item['sinh_hoc'] : null,
+                    'history'               => is_numeric($item['lich_su']) ? (float)$item['lich_su'] : null,
+                    'geography'             => is_numeric($item['dia_li']) ? (float)$item['dia_li'] : null,
+                    'civic_education'       => is_numeric($item['gdcd']) ? (float)$item['gdcd'] : null,
+                    'foreign_language_code' => $item['ma_ngoai_ngu'] ?: null,
+                    'total_group_a'         => $totalGroupA,
+                    'created_at'            => now(),
+                    'updated_at'            => now(),
                 ]);
 
                 $count++;
@@ -66,13 +63,15 @@ class StudentSeeder extends Seeder
                 if ($count % 5000 == 0) {
                     DB::commit();
                     DB::beginTransaction();
-                    $this->command->comment("Đã nạp $count dòng...");
+                    $this->command->comment("Commited $count lines...");
                 }
             }
             
             DB::commit();
             fclose($handle);
-            $this->command->info("Thành công! Đã nạp tổng cộng $count thí sinh.");
+            $this->command->info("Success! Commited total $count lines.");
+        } else {
+            $this->command->error("Can not connect URL: " . $url);
         }
     }
 }
